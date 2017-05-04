@@ -38,6 +38,44 @@ def calc_avg(column_data, num=5):
             avg_data.append(sum/(i+1))
         
     return avg_data
+    
+def get_profit(code, data):
+    data['roe'] = 0
+    data['net_profit_ratio'] = 0
+    data['gross_profit_rate'] = 0 
+    data['net_profits'] = 0 
+    data['esp'] = 0
+    data['business_income'] = 0
+    data['bips'] = 0
+    
+    # 净资产收益率
+    roe_data = []
+    # 净利率
+    net_profit_ratio_data = []
+    # 毛利率
+    gross_profit_rate_data = []
+    # 净利润
+    net_profits_data = []
+    # 每股收益
+    esp_data = []
+    # 营业收入
+    business_income_data = []
+    # 每股主营业务收入
+    bips_data = []
+    indexs = data.index
+    for i in range(len(indexs)):
+        try:
+            date = data.loc[indexs[i], 'date']
+            filename = "profit_data/profit_"+str(date.year)+"_"+str(int(date.month/3+1))+".csv"
+            #print(filename)
+            profit_data = pd.read_csv(filename)
+            row = profit_data[profit_data["code"]==int(code)]
+            #print(row.loc[row.index[0],'roe'])
+            data['roe'][i] = row.loc[row.index[0],'roe']
+        except Exception as e:
+            pass
+            #print(e)
+    print(data['roe'])
 
 # 处理数据
 def proc_data(data, show = False):
@@ -51,6 +89,8 @@ def proc_data(data, show = False):
     data.insert(8,'avg10', avg10_data)
     data.insert(9,'avg15', avg15_data)
     data.insert(10,'avg20', avg20_data)
+    #print(data['date'])
+    get_profit('002226', data)
     if show is True:
         data.plot(x='date',y=['open', 'avg5', 'avg10', 'avg15', 'avg20'])
         plt.show()
@@ -62,6 +102,6 @@ def save_data(filename, data):
 if __name__ == "__main__":
     filename = "002226.csv"
     data = load_data(filename)
-    #data = data.tail(200)
+    data = data.tail(200)
     proc_data(data)
-    save_data("p"+filename, data)
+    #save_data("p"+filename, data)

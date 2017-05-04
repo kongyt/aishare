@@ -46,11 +46,38 @@ def gather_stock_basics_and_save():
     data = gather_stock_basics()
     save_data(filename, data)
  
- 
+# 获取业绩报表数据
+def gather_report_data_and_save():
+    for i in range(1990,2018):
+        for j in range(1, 5):
+            try:
+                filename = "reports_data/report_"+str(i)+"_"+str(j)+".csv"
+                print('\n', filename,'\n')
+                data = ts.get_report_data(i,j)
+                data.drop_duplicates(['code'])
+                save_data(filename, data)
+            except:
+                pass
+                
+# 获取盈利能力数据
+def gather_profit_data_and_save():
+    for i in range(1990,2018):
+        for j in range(1, 5):
+            try:
+                filename = "profit_data/profit_"+str(i)+"_"+str(j)+".csv"
+                print('\n', filename,'\n')
+                data = ts.get_profit_data(i,j)
+                data.drop_duplicates(['code'])
+                save_data(filename, data)
+            except:
+                pass
+                
+
 # 帮助
 def help():
     print("commands:")
     print("    share <code>     | get share history data by code.")
+    print("    report           | get all report since 1990.")
     print("    basics           | get basics data.")
     print("    help             | this is.")
     print("")
@@ -66,6 +93,10 @@ if __name__ == "__main__":
     elif len(sys.argv) == 2:
         if sys.argv[1] == "basics":
             gather_stock_basics_and_save()
+        elif sys.argv[1] == "report":
+            gather_report_data_and_save()
+        elif sys.argv[1] == "profit":
+            gather_profit_data_and_save()
         elif sys.argv[1] == "help":
             help()
         else:
